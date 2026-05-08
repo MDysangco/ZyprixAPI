@@ -1,0 +1,6 @@
+@ZypryxAPI_HostAddress = http://localhost:5188
+
+GET {{ZypryxAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
