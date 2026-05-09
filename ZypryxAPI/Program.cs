@@ -1,9 +1,39 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Zyprix.Data.Interfaces;
 using Zyprix.Data.Repositories;
 using Zyprix.Services;
 using Zyprix.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "zypryx-api";
+var issuer = builder.Configuration["Jwt:Issuer"] ?? "zypryx-api";
+var audience = builder.Configuration["Jwt:Audience"] ?? "zypryx-api";
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("UserOnly", policy =>
+        policy.RequireClaim("role", "User"))
+    .AddPolicy("TaskerOnly", policy =>
+        policy.RequireClaim("role", "InternalService"));
+
 
 // Add services to the container.
 var conn = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
@@ -16,7 +46,12 @@ builder.Services.AddScoped<ICoinRepository>(sp => new CoinRepository(conn));
 builder.Services.AddScoped<IKlineService, KlineService>();
 builder.Services.AddScoped<ICoinService, CoinService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -28,6 +63,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

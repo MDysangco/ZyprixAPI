@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Zyprix.Models;
 using Zyprix.Services.Interfaces;
 
 namespace ZypryxAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class KlineController : ControllerBase
@@ -78,6 +80,5 @@ namespace ZypryxAPI.Controllers
                 return StatusCode(500, "An error occurred while deleting klines.");
             }
         }
-
     }
 }

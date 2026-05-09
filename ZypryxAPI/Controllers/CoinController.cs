@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Zyprix.Models;
 using Zyprix.Services.Interfaces;
 
 namespace ZypryxAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CoinController : ControllerBase
@@ -49,7 +51,7 @@ namespace ZypryxAPI.Controllers
 
         [HttpGet]
         [Route("coinId:int")]
-        public async Task<IActionResult> GetActiveCoins(int coinId)
+        public async Task<IActionResult> GetCoins(int coinId)
         {
             try
             {
