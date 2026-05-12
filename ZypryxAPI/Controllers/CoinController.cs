@@ -33,6 +33,7 @@ namespace ZypryxAPI.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("active")]
         public async Task<IActionResult> GetActiveCoins()
@@ -49,15 +50,14 @@ namespace ZypryxAPI.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("coinId:int")]
-        public async Task<IActionResult> GetCoins(int coinId)
+        [HttpGet("{coinId:int}")]
+        public async Task<IActionResult> GetCoin(int coinId)
         {
             try
             {
                 Coin coin = await _coinService.GetCoin(coinId);
                 return Ok(coin);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error fetching coin: {ex.Message}");

@@ -41,10 +41,14 @@ var conn = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 // Repositories
 builder.Services.AddScoped<IKlineRepository>(sp => new KlineRepository(conn));
 builder.Services.AddScoped<ICoinRepository>(sp => new CoinRepository(conn));
+builder.Services.AddScoped<IReadingRepository>(sp => new ReadingRepository(conn));
+builder.Services.AddScoped<IConfigurationRepository>(sp => new ConfigurationRepository(conn));
 
 // Services
 builder.Services.AddScoped<IKlineService, KlineService>();
 builder.Services.AddScoped<ICoinService, CoinService>();
+builder.Services.AddScoped<IReadingService, ReadingService>();
+builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
