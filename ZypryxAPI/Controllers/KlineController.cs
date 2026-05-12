@@ -17,6 +17,23 @@ namespace ZypryxAPI.Controllers
             _klineService = klineService;
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> Get([FromQuery]int? coinId, [FromQuery] KlineInterval? interval)
+        {
+            try
+            {
+                List<Kline> klines = await _klineService.GetKlines(coinId, interval);
+                return Ok(klines);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching klines: {ex.Message}");
+                return StatusCode(500, "An error occurred while fetching klines.");
+            }
+        }
+
         [HttpPost]
         [Route("insert")]
         public async Task<IActionResult> Insert([FromBody] List<Kline> kline)
